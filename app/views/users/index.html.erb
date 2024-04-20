@@ -1,0 +1,99 @@
+<!-- app/views/users/index.html.erb -->
+
+<!-- <h1>User Management</h1> -->
+
+<%= form_with(url: block_users_path, method: :post) do %>
+  <div class="btn-toolbar mb-4" role="toolbar">
+  <div class="btn-group mr-2" role="group">
+    <!-- Block button with icon and text -->
+    <%= button_tag type: "submit", class: "btn btn-light mr-2", title: "Block" do %>
+      <i class="fas fa-lock"></i> Block
+    <% end %>
+
+    <!-- Unblock button with icon only -->
+    <%= button_tag type: "button", class: "btn btn-light mr-2", onclick: "unblockUsers()", title: "Unblock" do %>
+      <i class="fas fa-lock-open"></i>
+    <% end %>
+
+    <!-- Delete button with icon only -->
+    <%= button_tag type: "button", class: "btn btn-danger", onclick: "deleteUsers()", title: "Delete" do %>
+      <i class="fas fa-trash-alt"></i>
+    <% end %>
+  </div>
+</div>
+
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"><input type="checkbox" id="select-all" onchange="toggleCheckboxes()"></th>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Last Login Time</th>
+        <th scope="col">Registration Time</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= check_box_tag 'user_ids[]', user.id %></td>
+          <td><%= user.id %></td>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.last_login_time.strftime("%H:%M:%S, %d %b, %Y") %></td>
+          <td><%= user.created_at.strftime("%H:%M:%S, %d %b, %Y") %></td>
+          <td><%= user.status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+
+<script>
+  function toggleCheckboxes() {
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
+    const selectAllCheckbox = document.getElementById('select-all');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  }
+
+  function getSelectedUserIds() {
+  const checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+  const ids = [];
+  checkboxes.forEach((checkbox) => {
+    
+    const user_ids = checkbox.value.split(',').map(id => id.trim());
+    
+    ids.push(...user_ids);
+  });
+  return ids;
+}
+
+
+
+  function unblockUsers() {
+    document.getElementById('user_ids').value = getSelectedUserIds();
+    document.getElementById('unblock-form').submit();
+  }
+
+  function deleteUsers() {
+    document.getElementById('delete_user_ids').value = getSelectedUserIds(); // Update the ID of the delete form's hidden field
+    document.getElementById('delete-form').submit();
+  }
+
+
+</script>
+
+<%= form_with(url: unblock_users_path, method: :post, id: 'unblock-form') do %>
+  <%= hidden_field_tag 'user_ids[]', '', id: 'user_ids' %>
+<% end %>
+
+<%= form_with(url: users_path, method: :delete, id: 'delete-form') do %>
+  <%= hidden_field_tag 'user_ids[]', '', id: 'delete_user_ids' %> <!-- Updated ID for the delete form's hidden field -->
+  <!-- Add a submit button to trigger the form submission -->
+  <%= submit_tag 'Delete', class: 'btn btn-outline-danger', style: 'display: none;' %>
+<% end %>

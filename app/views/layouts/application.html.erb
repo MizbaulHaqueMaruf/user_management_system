@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Management Application</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Bootstrap CSS -->
+    <%= stylesheet_link_tag 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' %>
+    <!-- Application CSS -->
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <!-- Add this line to your HTML layout -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  </head>
+
+  <body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <div class="container">
+    <!-- Brand/logo -->
+    <a class="navbar-brand" href="<%= root_path %>">User Management App</a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <% if current_user %>
+          <!-- Show user email if logged in -->
+          <li class="nav-item">
+  <span class="navbar-text text-dark">
+    Hello, <%= current_user.name %>!
+  </span>
+</li>
+
+          <!-- Log out link -->
+          <li class="nav-item">
+            <%= link_to 'Log Out', logout_path, method: :delete, class: "nav-link" %>
+          </li>
+        <% else %>
+          <!-- Log in and sign up links if not logged in -->
+          <li class="nav-item">
+            <%= link_to 'Log In', login_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Sign Up', users_new_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="container">
+<!-- Bootstrap alert to display alerts -->
+<% if notice %>
+  <div class="alert alert-success" role="alert">
+    <%= notice %>
+  </div>
+<% end %>
+
+<% if alert %>
+  <div class="alert alert-danger" role="alert">
+    <%= alert %>
+  </div>
+<% end %>
+</div>
+</div>
+
+<div class="container">
+  <%= yield %>
+</div>
+
+
+    <!-- Bootstrap JavaScript -->
+    <%= javascript_include_tag 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js' %>
+    <!-- Application JavaScript -->
+    <%= javascript_importmap_tags %>
+  </body>
+</html>
